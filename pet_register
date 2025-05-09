@@ -1,0 +1,137 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class Dono {
+private:
+    string nome;
+    string telefone;
+    string endereco;
+
+public:
+    // Construtor
+    Dono(string nome, string telefone, string endereco) {
+        this->nome = nome;
+        this->telefone = telefone;
+        this->endereco = endereco;
+    }
+
+    // Métodos get
+    string getNome() const { return nome; }
+    string getTelefone() const { return telefone; }
+    string getEndereco() const { return endereco; }
+
+    // Métodos set
+    void setNome(string novoNome) { nome = novoNome; }
+    void setTelefone(string novoTelefone) { telefone = novoTelefone; }
+    void setEndereco(string novoEndereco) { endereco = novoEndereco; }
+
+    // Método para exibir informações
+    void mostrarInfo() const {
+        cout << "Dono: " << nome << endl;
+        cout << "Telefone: " << telefone << endl;
+        cout << "Endereço: " << endereco << endl;
+    }
+};
+
+class SistemaRegistro {
+private:
+    vector<Pet*> pets;
+    vector<Dono*> donos;
+
+public:
+    // Método para registrar um novo dono
+    Dono* registrarDono() {
+        string nome, telefone, endereco;
+
+        cout << "\nRegistro de Dono:" << endl;
+        cout << "Nome: ";
+        getline(cin, nome);
+        cout << "Telefone: ";
+        getline(cin, telefone);
+        cout << "Endereço: ";
+        getline(cin, endereco);
+
+        Dono* novoDono = new Dono(nome, telefone, endereco);
+        donos.push_back(novoDono);
+        return novoDono;
+    }
+
+    // Método para registrar um novo pet
+    void registrarPet() {
+        string nome, especie, raca;
+        int idade;
+
+        cout << "\nRegistro de Pet:" << endl;
+        cout << "Nome: ";
+        getline(cin, nome);
+        cout << "Espécie: ";
+        getline(cin, especie);
+        cout << "Raça: ";
+        getline(cin, raca);
+        cout << "Idade: ";
+        cin >> idade;
+        cin.ignore(); // Limpar o buffer
+
+        Dono* dono = registrarDono();
+        Pet* novoPet = new Pet(nome, especie, raca, idade, dono);
+        pets.push_back(novoPet);
+
+        cout << "\nPet registrado com sucesso!" << endl;
+    }
+
+    // Método para listar todos os pets
+    void listarPets() const {
+        if (pets.empty()) {
+            cout << "\nNenhum pet registrado ainda." << endl;
+            return;
+        }
+
+        cout << "\nLista de Pets Registrados:" << endl;
+        for (size_t i = 0; i < pets.size(); ++i) {
+            pets[i]->mostrarInfo();
+            cout << "-----------------------" << endl;
+        }
+    }
+
+    // Destrutor para liberar memória
+    ~SistemaRegistro() {
+        for (auto pet : pets) delete pet;
+        for (auto dono : donos) delete dono;
+    }
+};
+
+int main() {
+    SistemaRegistro sistema;
+    int opcao;
+
+    cout << "Sistema de Registro de Pets e Donos" << endl;
+
+    do {
+        cout << "\nMenu:" << endl;
+        cout << "1. Registrar novo pet" << endl;
+        cout << "2. Listar todos os pets" << endl;
+        cout << "3. Sair" << endl;
+        cout << "Escolha uma opção: ";
+        cin >> opcao;
+        cin.ignore(); // Limpar o buffer
+
+        switch (opcao) {
+            case 1:
+                sistema.registrarPet();
+                break;
+            case 2:
+                sistema.listarPets();
+                break;
+            case 3:
+                cout << "Saindo do sistema..." << endl;
+                break;
+            default:
+                cout << "Opção inválida. Tente novamente." << endl;
+        }
+    } while (opcao != 3);
+
+    return 0;
+}
